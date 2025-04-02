@@ -1,7 +1,8 @@
 import { Response, NextFunction } from "express";
 import CommonService from "../Global/common";
 import { HTTP_CODE } from "../Global/constant";
-import { RequestType } from "../../types/RequestTypes";
+import { RequestType } from "../../types/requestTypes";
+import AuthService from "../Auth/auth";
 
 class Auth{
   async isAuthorized(req: RequestType, res: Response, next: NextFunction){
@@ -10,7 +11,7 @@ class Auth{
       if(!token){
         return CommonService.handleResponse(res, "UNAUTHORIZED", HTTP_CODE.UNAUTHORIZED_CODE, HTTP_CODE.FAILED);
       }
-      const decodedToken = await CommonService.verifyToken(token);
+      const decodedToken = await AuthService.verifyToken(token);
       if(decodedToken){
         req.currentUser = decodedToken;
         next();

@@ -1,6 +1,8 @@
-import { DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional } from "sequelize";
+import { DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional, HasManyAddAssociationMixin, HasManyAddAssociationsMixin, HasManySetAssociationsMixin, HasManyRemoveAssociationMixin, HasManyRemoveAssociationsMixin, HasManyHasAssociationMixin, HasManyHasAssociationsMixin, HasManyCountAssociationsMixin, HasManyCreateAssociationMixin, Association, NonAttribute } from "sequelize";
 import sequelizeConnection from "../../config/sequelize";
 import bcrypt from "bcrypt";
+import AuthenticationToken from "../Authentication/Model";
+import { HasManyGetAssociationsMixin } from "sequelize";
 
 class User extends Model<InferAttributes<User>, InferCreationAttributes<User>>{
   declare _id: CreationOptional<string>;
@@ -19,6 +21,17 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>>{
   declare isDeleted: boolean;
   declare age: number;
   declare mobile: number;
+
+  declare getAuthenticationTokens: HasManyGetAssociationsMixin<AuthenticationToken>;
+  declare addAuthenticationToken: HasManyAddAssociationMixin<AuthenticationToken, number>;
+  declare addAuthenticationTokens: HasManyAddAssociationsMixin<AuthenticationToken, number>;
+  declare setAuthenticationTokens: HasManySetAssociationsMixin<AuthenticationToken, number>;
+  declare removeAuthenticationToken: HasManyRemoveAssociationMixin<AuthenticationToken, number>;
+  declare removeAuthenticationTokens: HasManyRemoveAssociationsMixin<AuthenticationToken, number>;
+  declare hasAuthenticationToken: HasManyHasAssociationMixin<AuthenticationToken, number>;
+  declare hasAuthenticationTokens: HasManyHasAssociationsMixin<AuthenticationToken, number>;
+  declare countAuthenticationTokens: HasManyCountAssociationsMixin;
+  declare createAuthenticationToken: HasManyCreateAssociationMixin<AuthenticationToken, 'userId'>;
 }
 
 User.init({
@@ -26,7 +39,7 @@ User.init({
     type: DataTypes.UUID,
     allowNull: false,
     primaryKey: true,
-    defaultValue: DataTypes.UUIDV4
+    defaultValue: DataTypes.UUID
   },
   fullName:{
     type: DataTypes.STRING,
@@ -69,6 +82,8 @@ User.init({
   updatedAt: 'updatedAt'
 });
 
+User.hasMany(AuthenticationToken);
+
 User.addHook("beforeCreate", (user: User) => {
   user.password = bcrypt.hashSync(user.password, 10)  ;
 });
@@ -78,6 +93,7 @@ User.addHook("beforeUpdate", (user: User) => {
     user.password = bcrypt.hashSync(user.password, 10);
   }
 });
+
 
 (async () =>{
   await sequelizeConnection.sync({alter: true});
