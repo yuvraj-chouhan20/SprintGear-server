@@ -8,9 +8,20 @@ import path from 'path';
 import swaggerUI from 'swagger-ui-express';
 import fs from 'fs';
 import config from './config';
+import i18n from 'i18n';
 
 export default () =>{
   const app = express();
+
+  i18n.configure({
+    locales: ['en', 'hi'],
+    directory: path.join(__dirname, '../locales'),
+    defaultLocale: 'en',
+    cookie: 'lang',
+    objectNotation: true
+  });
+
+  app.use(i18n.init);
   app.use(express.json());
   app.use(bodyParser.json());
   app.use(cookieParser());

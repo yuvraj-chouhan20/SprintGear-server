@@ -1,11 +1,18 @@
 import { glob } from "glob";
 import { Sequelize } from "sequelize";
 import path from "path";
+import config from "./config";
 
-const sequelizeConnection = new Sequelize("sprintgear", "yuvraj", "groot", {
+const db_name: string = config.db_name!;
+const db_user: string = config.db_user!;
+const db_password: string = config.db_password!;
+const db_host: string = config.db_host!;
+const db_port: string = config.db_port!;
+
+const sequelizeConnection = new Sequelize(db_name, db_user, db_password, {
   dialect: "postgres",
-  host: process.env.DB_HOST || "localhost",
-  port: Number(process.env.DB_PORT || 5432),
+  host: db_host,
+  port: Number(db_port),
 });
 
 interface ModelDictionary {
@@ -18,7 +25,7 @@ const databaseConnection = async (): Promise<Sequelize> => {
     console.log("Database connection has been established successfully.");
 
     let db: ModelDictionary = {};
-    const modules = "../app/modules";
+    const modules = "../modules";
     const schemaFiles = glob.sync(path.join(__dirname, modules, "**/Model.ts"));
 
     schemaFiles.forEach((schema: string) => {

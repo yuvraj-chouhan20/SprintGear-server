@@ -1,0 +1,10 @@
+{
+	"NOT_FOUND": "Not Found",
+	"UPDATED_SUCCESSFULLY": "Updated Successfully",
+	"CREATED_SUCCESSFULLY": "Created Successfully",
+	"DELETED_SUCCESSFULLY": "Deleted Successfully",
+	"USER_EXIST": "User already exists",
+	"LOGIN_SUCCESS": "Login successfull",
+	"FAILED_TO_CREATE_USER": "Failed to create user",
+	"USER_NOT_FOUND": "USER_NOT_FOUND"
+}

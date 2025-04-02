@@ -15,6 +15,8 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>>{
     country: string;
     zipCode: string;
   };
+  declare gender: 'male' | 'female' | 'other';
+  declare isDeleted: boolean;
   declare age: number;
   declare mobile: number;
 }
@@ -36,6 +38,15 @@ User.init({
   },
   password:{
     type: DataTypes.STRING,
+    allowNull: false
+  },
+  isDeleted: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
+  gender: {
+    type: DataTypes.ENUM('male', 'female', 'other'),
     allowNull: false
   },
   address:{
