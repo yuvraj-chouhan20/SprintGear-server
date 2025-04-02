@@ -1,0 +1,16 @@
+{
+  "paths":{
+    "/api/users":{
+      "get":{
+        "summary":"Get all users",
+        "description":"Get all users",
+        "responses":{
+          "200":{
+            "description":"Success"
+          }
+        }
+      }
+    }
+  },
+  "definitions":{}
+}

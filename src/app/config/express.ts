@@ -5,8 +5,9 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import { sync } from 'glob'
 import path from 'path';
-
-
+import swaggerUI from 'swagger-ui-express';
+import fs from 'fs';
+import config from './config';
 
 export default () =>{
   const app = express();
@@ -21,10 +22,35 @@ export default () =>{
   }));
   app.use(morgan('dev'));
 
+
+  if(config.NODE_ENV !== 'production'){
+    let options = {
+      customCss: '.swagger-ui .models { display: none }'
+    };
+    let mainSwaggerData = JSON.parse(fs.readFileSync('swagger.json', 'utf8'));
+    mainSwaggerData.host = config.HOST;
+    mainSwaggerData.basePath = process.env.BASE_PATH;
+    const modules = path.join(__dirname, '../modules');
+    fs.readdirSync(modules).forEach(file =>{
+      console.log(modules + "/" + file)
+      if(fs.existsSync(modules + "/" + file + "/swagger.json")){
+        const stats = fs.statSync(modules + "/" + file + "/swagger.json");
+        const fileSizeBytes = stats.size;
+        if(fileSizeBytes){
+          const moduleSwaggerData = JSON.parse(fs.readFileSync(modules + "/" + file + "/swagger.json", 'utf8'));
+          mainSwaggerData.paths = { ...mainSwaggerData.paths, ...moduleSwaggerData.paths };
+          mainSwaggerData.definitions = { ...mainSwaggerData.definitions, ...moduleSwaggerData.definitions };
+        }
+      }
+    })
+    let swaggerDocument = mainSwaggerData;
+    app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument, options));
+  }
+
   sync(path.join(__dirname, '../modules','**', 'Routes.ts')).forEach((file: string) => {
     const route = require(file).default;
     if(route){
-      app.use('/api', route(express));
+      app.use('/api', route(app));
     }
   });
 

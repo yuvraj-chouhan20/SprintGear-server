@@ -1,5 +1,6 @@
-import { DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional, NonAttribute } from "sequelize";
-import { sequelizeConnection } from "../../config/sequelize";
+import { DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional } from "sequelize";
+import sequelizeConnection from "../../config/sequelize";
+import bcrypt from "bcrypt";
 
 class User extends Model<InferAttributes<User>, InferCreationAttributes<User>>{
   declare _id: CreationOptional<string>;
@@ -57,6 +58,15 @@ User.init({
   updatedAt: 'updatedAt'
 });
 
+User.addHook("beforeCreate", (user: User) => {
+  user.password = bcrypt.hashSync(user.password, 10)  ;
+});
+
+User.addHook("beforeUpdate", (user: User) => {
+  if(user.password !== undefined){
+    user.password = bcrypt.hashSync(user.password, 10);
+  }
+});
 
 (async () =>{
   await sequelizeConnection.sync({alter: true});

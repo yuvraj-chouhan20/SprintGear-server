@@ -1,17 +1,17 @@
-import { NextFunction, Request, Response, Router } from "express";
+import { NextFunction, Request, Response, Router, Application } from "express";
 import UserController from "./Controller";
-export default () => {
+export default (app: Application) => {
 
   const router: Router = Router();
 
-  router.post('/user/login', (req: Request, res: Response, next: NextFunction) => {
+  router.post('/user/login', async (req: Request, res: Response, next: NextFunction) => {
     const userObj: UserController = new UserController(req, res, next);
-    return userObj.login();
+    await userObj.login();
   });
 
-  router.post('/user/register', (req: Request, res: Response, next: NextFunction) => {
+  router.post('/user/register', async (req: Request, res: Response, next: NextFunction) => {
     const userObj: UserController = new UserController(req, res, next);
-    return userObj.register();
+    await userObj.register();
   });
 
   router.get('/user/profile', (req: Request, res: Response, next: NextFunction) => {
@@ -29,5 +29,6 @@ export default () => {
     return userObj.resetPassword();
   });
 
+  // app.use('/user', router);
   return router;
 };

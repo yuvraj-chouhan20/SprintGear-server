@@ -1,7 +1,12 @@
 import expressConfig from './app/config/express';
+import { databaseConnection }  from './app/config/sequelize';
+import config from './app/config/config';
 
 const app = expressConfig();
+databaseConnection();
 
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
+console.log(config)
+
+app.listen(config.port, () => {
+  console.log('Server is running on port', config.port);
 });

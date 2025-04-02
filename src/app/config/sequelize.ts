@@ -2,10 +2,10 @@ import { glob } from "glob";
 import { Sequelize } from "sequelize";
 import path from "path";
 
-const sequelizeConnection = new Sequelize("SprintGear", "yuvraj", "groot", {
+const sequelizeConnection = new Sequelize("sprintgear", "yuvraj", "groot", {
   dialect: "postgres",
   host: process.env.DB_HOST || "localhost",
-  port: Number(process.env.DB_PORT),
+  port: Number(process.env.DB_PORT || 5432),
 });
 
 interface ModelDictionary {
@@ -19,7 +19,7 @@ const databaseConnection = async (): Promise<Sequelize> => {
 
     let db: ModelDictionary = {};
     const modules = "../app/modules";
-    const schemaFiles = glob.sync(path.join(__dirname, modules, "**/Schema.ts"));
+    const schemaFiles = glob.sync(path.join(__dirname, modules, "**/Model.ts"));
 
     schemaFiles.forEach((schema: string) => {
       const models = require(schema).default;
@@ -39,4 +39,5 @@ const databaseConnection = async (): Promise<Sequelize> => {
 };
 
 sequelizeConnection.sync();
-exports.sequelize =  {sequelizeConnection, databaseConnection};
+export default sequelizeConnection;
+export { databaseConnection };
