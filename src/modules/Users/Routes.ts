@@ -14,19 +14,19 @@ export default (app: Application) => {
     await userObj.register();
   });
 
-  router.get('/user/profile', (req: Request, res: Response, next: NextFunction) => {
+  router.get('/user/profile', async (req: Request, res: Response, next: NextFunction) => {
     const userObj: UserController = new UserController(req, res, next);
-    return userObj.profile();
+    await userObj.profile();
   });
 
-  router.post("/user/forget-password", (req: Request, res: Response, next: NextFunction) => {
+  router.post("/user/forget-password", async (req: Request, res: Response, next: NextFunction) => {
     const userObj: UserController = new UserController(req, res, next);
-    return userObj.forgetPassword();
+    await userObj.forgetPassword();
   });
 
-  router.post("/user/reset-password", (req: Request, res: Response, next: NextFunction) => {
+  router.post("/user/reset-password", async (req: Request, res: Response, next: NextFunction) => {
     const userObj: UserController = new UserController(req, res, next);
-    return userObj.resetPassword();
+    await userObj.resetPassword();
   });
 
   // app.use('/user', router);

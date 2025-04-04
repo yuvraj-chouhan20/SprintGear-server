@@ -6,5 +6,12 @@
 	"USER_EXIST": "User already exists",
 	"LOGIN_SUCCESS": "Login successfull",
 	"FAILED_TO_CREATE_USER": "Failed to create user",
-	"USER_NOT_FOUND": "USER_NOT_FOUND"
+	"USER_NOT_FOUND": "USER_NOT_FOUND",
+	"SERVER_ERROR": "Internal server Error",
+	"LOGIN_FAILED": "Login failed please try again!",
+	"FORGET_PASSWORD_SENT": "FORGET_PASSWORD_SENT",
+	"PASSWORD_RESET_SUCCESS": "Password Reset Successfully",
+	"PASSWORD_RESET_FAILED": "Password not reset, try again",
+	"CONFIRM_PASSWORD_NOT_MATCHED": "CONFIRM_PASSWORD_NOT_MATCHED",
+	"PASSWORD_RESET_TOKEN_EXPIRED": "Token Expired! Please try again"
 }

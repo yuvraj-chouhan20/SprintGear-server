@@ -3,6 +3,7 @@ import BaseController from "../Base/Controller";
 import User from "./Model";
 import CommonService from "../../services/Global/common";
 import { HTTP_CODE } from "../../services/Global/constant";
+import AuthService from "../../services/Auth/auth";
 
 class UserController extends BaseController{
   constructor(req: Request, res: Response, next: NextFunction){
@@ -11,18 +12,24 @@ class UserController extends BaseController{
 
   async login() {
     try {
-      const processBody = ["email", "password"];
+      const processBody = ["email", "password", "deviceId"];
       const processedData = CommonService.processBody(processBody, this.req.body);
-      const user: User | null = await User.findOne({ where: { email: processedData.email } });
+      const user: User | null = await User.findOne({ where: { email: processedData.email }, attributes: { exclude: ["password"]} });
       if (!user) {
         return CommonService.handleResponse(this.res, "USER_NOT_FOUND", HTTP_CODE.NOT_FOUND_CODE, HTTP_CODE.FAILED);
       }
-      // const isPasswordValid = await bcrypt.compare(password, user.password);
-      // if (!isPasswordValid) {
-      //   return this.res.status(401).json({ message: "Invalid password" });
-      // }
-      console.log(user)
-      CommonService.handleResponse(this.res, "LOGIN_SUCCESS", HTTP_CODE.SUCCESS_CODE, HTTP_CODE.SUCCESS, user);
+
+      const userTokens = await AuthService.createLogin(user.dataValues, processedData.deviceId)
+
+      if(!userTokens.token){
+        return CommonService.handleResponse(this.res, "LOGIN_FAILED",HTTP_CODE.SERVER_ERROR_CODE, HTTP_CODE.FAILED);
+      }
+      let userResponse = {
+        ...user.dataValues,
+        token: userTokens.token,
+        deviceId: userTokens.deviceId
+      }
+      CommonService.handleResponse(this.res, "LOGIN_SUCCESS", HTTP_CODE.SUCCESS_CODE, HTTP_CODE.SUCCESS, userResponse);
 
     } catch (error) {
       console.log("Error in login", error);
@@ -66,11 +73,46 @@ class UserController extends BaseController{
   }
 
   async forgetPassword(){
-    CommonService.handleResponse(this.res, "USER_NOT_FOUND", HTTP_CODE.NOT_FOUND_CODE, HTTP_CODE.FAILED)
+    const { email } = this.req.body;
+
+    const user: User | null = await User.findOne({where: {email, isDeleted: false, status: true}, raw: true});
+
+    if(!user){
+      return CommonService.handleResponse(this.res, "USER_NOT_FOUND", HTTP_CODE.CONFLICT_CODE, HTTP_CODE.FAILED)
+    }
+
+    const forgotPasswordToken = await AuthService.generateForgotPasswordToken(user);
+
+    if(forgotPasswordToken){
+      return CommonService.handleResponse(this.res, "FORGET_PASSWORD_SENT", HTTP_CODE.SUCCESS_CODE, HTTP_CODE.SUCCESS, forgotPasswordToken);
+    }
+
+    CommonService.handleResponse(this.res, "FORGET_PASSWORD_SENT", HTTP_CODE.SUCCESS_CODE, HTTP_CODE.SUCCESS);
   }
 
   async resetPassword(){
-    CommonService.handleResponse(this.res, "USER_NOT_FOUND", HTTP_CODE.NOT_FOUND_CODE, HTTP_CODE.FAILED)
+    const token = this.req.query.resetToken?.toString().trim();
+    const { newPassword, confirmPassword } = this.req.body;
+
+    if(!token){
+      return CommonService.handleResponse(this.res, "CONFIRM_PASSWORD_NOT_MATCHED", HTTP_CODE.UNPROCESSABLE_ENTITY, HTTP_CODE.FAILED)
+    }
+    if(newPassword !== confirmPassword){
+      return CommonService.handleResponse(this.res, "CONFIRM_PASSWORD_NOT_MATCHED", HTTP_CODE.UNPROCESSABLE_ENTITY, HTTP_CODE.FAILED)
+    }
+
+    const authData = await AuthService.checkResetTokenExpiration(token);
+
+    if(authData && typeof authData !== "string"){
+      const [affectedCount, affectedRows] = await User.update({
+        password: newPassword
+      }, { where: { _id: authData._id },individualHooks: true, returning: true});
+
+      if(affectedCount && affectedRows[0]){
+        return CommonService.handleResponse(this.res, "PASSWORD_RESET_SUCCESS", HTTP_CODE.SUCCESS_CODE, HTTP_CODE.SUCCESS)
+      }
+    }
+    CommonService.handleResponse(this.res, "PASSWORD_RESET_TOKEN_EXPIRED", HTTP_CODE.UNPROCESSABLE_ENTITY, HTTP_CODE.FAILED)
   }
 }
 

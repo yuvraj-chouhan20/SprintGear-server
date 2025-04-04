@@ -21,6 +21,9 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>>{
   declare isDeleted: boolean;
   declare age: number;
   declare mobile: number;
+  declare passwordResetToken: CreationOptional<string>
+  declare passwordResetTokenExpiration: CreationOptional<Date>
+  declare status: boolean;
 
   declare getAuthenticationTokens: HasManyGetAssociationsMixin<AuthenticationToken>;
   declare addAuthenticationToken: HasManyAddAssociationMixin<AuthenticationToken, number>;
@@ -39,7 +42,7 @@ User.init({
     type: DataTypes.UUID,
     allowNull: false,
     primaryKey: true,
-    defaultValue: DataTypes.UUID
+    defaultValue: DataTypes.UUIDV4
   },
   fullName:{
     type: DataTypes.STRING,
@@ -58,6 +61,11 @@ User.init({
     allowNull: false,
     defaultValue: false
   },
+  status:{
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: true
+  },
   gender: {
     type: DataTypes.ENUM('male', 'female', 'other'),
     allowNull: false
@@ -73,6 +81,14 @@ User.init({
   mobile:{
     type: DataTypes.INTEGER,
     allowNull: false
+  },
+  passwordResetToken:{
+    type:DataTypes.TEXT,
+    allowNull: true
+  },
+  passwordResetTokenExpiration:{
+    type: DataTypes.DATE,
+    allowNull: true
   }
 }, {
   tableName: 'users',

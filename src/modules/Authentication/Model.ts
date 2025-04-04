@@ -4,7 +4,7 @@ import User from "../Users/Model";
 
 
 class AuthenticationToken extends Model<InferAttributes<AuthenticationToken>, InferCreationAttributes<AuthenticationToken>>{
-  declare _id: CreationOptional<string>;
+  declare _id?: CreationOptional<string>;
   declare userId: ForeignKey<User['_id']>;
   declare deviceId: string;
   declare token: string;
@@ -19,7 +19,7 @@ AuthenticationToken.init({
     type: DataTypes.UUID,
     allowNull: false,
     primaryKey: true,
-    defaultValue: DataTypes.UUID
+    defaultValue: DataTypes.UUIDV4
   },
   userId: {
     type:  DataTypes.UUID,
@@ -31,7 +31,7 @@ AuthenticationToken.init({
     defaultValue: "web"
   },
   token: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
     allowNull: false
   },
   ipAddress: {
@@ -39,7 +39,7 @@ AuthenticationToken.init({
     allowNull: true
   },
   refreshToken:{
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
     allowNull: false
   }
 },{
