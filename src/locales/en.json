@@ -13,5 +13,7 @@
 	"PASSWORD_RESET_SUCCESS": "Password Reset Successfully",
 	"PASSWORD_RESET_FAILED": "Password not reset, try again",
 	"CONFIRM_PASSWORD_NOT_MATCHED": "CONFIRM_PASSWORD_NOT_MATCHED",
-	"PASSWORD_RESET_TOKEN_EXPIRED": "Token Expired! Please try again"
+	"PASSWORD_RESET_TOKEN_EXPIRED": "Token Expired! Please try again",
+	"": "",
+	"ROLE_CREATED": "ROLE_CREATED"
 }

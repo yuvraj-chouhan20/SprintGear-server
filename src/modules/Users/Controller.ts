@@ -4,8 +4,10 @@ import User from "./Model";
 import CommonService from "../../services/Global/common";
 import { HTTP_CODE } from "../../services/Global/constant";
 import AuthService from "../../services/Auth/auth";
+import { InferAttributes } from "sequelize";
+import { Role } from "../Roles/Model";
 
-class UserController extends BaseController{
+class UserController extends BaseController<Request>{
   constructor(req: Request, res: Response, next: NextFunction){
     super(req, res, next);
   }
@@ -14,7 +16,7 @@ class UserController extends BaseController{
     try {
       const processBody = ["email", "password", "deviceId"];
       const processedData = CommonService.processBody(processBody, this.req.body);
-      const user: User | null = await User.findOne({ where: { email: processedData.email }, attributes: { exclude: ["password"]} });
+      const user: User | null = await User.findOne({ where: { email: processedData.email, isDeleted: false }, include: Role, attributes: { exclude: ["password"]} });
       if (!user) {
         return CommonService.handleResponse(this.res, "USER_NOT_FOUND", HTTP_CODE.NOT_FOUND_CODE, HTTP_CODE.FAILED);
       }
@@ -57,8 +59,9 @@ class UserController extends BaseController{
         return CommonService.handleResponse(this.res, "USER_EXIST", HTTP_CODE.CONFLICT_CODE, HTTP_CODE.FAILED);
       }
 
-      const newsUser: User | null = await User.create(processedData);
-      if(newsUser){
+      // const newsUser: User | null = await User.create(processedData);
+      const newUser: InferAttributes<User> | null = await AuthService.registerUser(processedData);
+      if(newUser){
         return CommonService.handleResponse(this.res, "CREATED_SUCCESSFULLY", HTTP_CODE.RESOURCE_CREATED_CODE, HTTP_CODE.SUCCESS);
       }
       CommonService.handleResponse(this.res, "FAILED_TO_CREATE_USER", HTTP_CODE.SERVER_ERROR_CODE, HTTP_CODE.FAILED);

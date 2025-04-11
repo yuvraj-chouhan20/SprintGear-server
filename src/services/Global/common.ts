@@ -15,7 +15,7 @@ class CommonService{
    * @param data data to send
    * @returns 
    */
-  static handleResponse(res: Response, message: string, status:number, resStatus: boolean, data?: any){
+  static handleResponse(res: Response | Response, message: string, status:number, resStatus: boolean, data?: any){
     return res
             .status(status)
             .send({status: resStatus, message: i18n.__(message), data});

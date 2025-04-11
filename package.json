@@ -1,5 +1,5 @@
 {
-  "name": "soleHeart",
+  "name": "VelocityFit",
   "version": "1.0.0",
   "main": "index.ts",
   "license": "MIT",
@@ -44,6 +44,6 @@
     "swagger-ui": "^5.20.2",
     "swagger-ui-express": "^5.0.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.3"
   }
 }

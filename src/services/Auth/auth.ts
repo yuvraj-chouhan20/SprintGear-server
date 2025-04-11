@@ -3,6 +3,8 @@ import User from "../../modules/Users/Model";
 import config from "../../config/config";
 import { InferAttributes, InferCreationAttributes } from "sequelize";
 import AuthenticationToken from "../../modules/Authentication/Model";
+import { JwtPayloadType } from "../../types/requestTypes";
+import { Role } from "../../modules/Roles/Model";
 
 class AuthService{
 
@@ -39,8 +41,32 @@ class AuthService{
 
   /**
    * 
-   * @param data user data to genreate password reset token
+   * @param data user data to register
    * @returns 
+   */
+  static async registerUser(data: InferAttributes<User>): Promise<InferAttributes<User> | null> {
+    try {
+      const defaultRole: Role | null = await Role.findOne({ where: { staticKey: "user" } });
+      if(!defaultRole){
+        return null;
+      }
+      const user: User | null = await User.create({
+        ...data,
+        roleId: defaultRole?._id
+      });
+      if(user){
+        return user;
+      }
+      return null;
+    } catch (error) {
+      console.log("Error in registerUser", error)
+      return null;
+    }
+  }
+
+  /**
+   * @param data user data to genreate password reset token
+   * @returns
    */
   static async generateForgotPasswordToken(data: InferAttributes<User>): Promise<boolean | string> {
     const expiresIn: number = Date.now() + 10 * 60 * 60 * 1000
@@ -77,7 +103,7 @@ class AuthService{
  * @returns token
  */
   static async genreateToken(data: InferAttributes<User>, expiresIn?: number): Promise<string>{
-    try {
+      try {
       const token = jwt.sign(data, config.jwt_secret!, { algorithm: "HS256", expiresIn: expiresIn});
       return token;
     } catch (error) {
@@ -92,13 +118,13 @@ class AuthService{
    * @returns decoded token
    */
 
-  static async verifyToken(token: string){
+  static async verifyToken(token: string): Promise<JwtPayloadType | string>{
     try {
-      const decodedToken = jwt.verify(token, config.jwt_secret!);
-      return decodedToken;
+      const decodedToken: string | JwtPayload = jwt.verify(token, config.jwt_secret!);
+      return decodedToken as JwtPayloadType;
     } catch (error) {
       console.log(error);
-      return undefined;
+      return "";
     }
   }
 }

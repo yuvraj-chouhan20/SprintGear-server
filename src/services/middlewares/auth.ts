@@ -1,25 +1,31 @@
 import { Response, NextFunction } from "express";
 import CommonService from "../Global/common";
 import { HTTP_CODE } from "../Global/constant";
-import { RequestType } from "../../types/requestTypes";
+import { JwtPayloadType, RequestType } from "../../types/requestTypes";
 import AuthService from "../Auth/auth";
+import { JwtPayload } from "jsonwebtoken";
 
 class Auth{
-  async isAuthorized(req: RequestType, res: Response, next: NextFunction){
+  static async isAuthorized(req: RequestType, res: Response, next: NextFunction): Promise<void>{
     try {
       const token = req.headers.authorization;
       if(!token){
-        return CommonService.handleResponse(res, "UNAUTHORIZED", HTTP_CODE.UNAUTHORIZED_CODE, HTTP_CODE.FAILED);
+        CommonService.handleResponse(res, "UNAUTHORIZED", HTTP_CODE.UNAUTHORIZED_CODE, HTTP_CODE.FAILED);
+        return
       }
-      const decodedToken = await AuthService.verifyToken(token);
-      if(decodedToken){
+      const decodedToken: string | JwtPayloadType = await AuthService.verifyToken(token);
+      if(!decodedToken && typeof decodedToken == "string"){
+        CommonService.handleResponse(res, "", HTTP_CODE.UNAUTHORIZED_CODE, HTTP_CODE.FAILED);
+        return;
+      }
+      if(decodedToken && typeof decodedToken !== "string"){
         req.currentUser = decodedToken;
         next();
       }
-      return CommonService.handleResponse(res, "", HTTP_CODE.UNAUTHORIZED_CODE, HTTP_CODE.FAILED)
     } catch (error) {
       console.log("Error in isAuthorized", error);
-      next(error);
+      CommonService.handleResponse(res, "", HTTP_CODE.UNAUTHORIZED_CODE, HTTP_CODE.FAILED)
+      return;
     }
   }
 }

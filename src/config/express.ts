@@ -43,7 +43,6 @@ export default () =>{
     mainSwaggerData.basePath = process.env.BASE_PATH;
     const modules = path.join(__dirname, '../modules');
     fs.readdirSync(modules).forEach(file =>{
-      console.log(modules + "/" + file)
       if(fs.existsSync(modules + "/" + file + "/swagger.json")){
         const stats = fs.statSync(modules + "/" + file + "/swagger.json");
         const fileSizeBytes = stats.size;

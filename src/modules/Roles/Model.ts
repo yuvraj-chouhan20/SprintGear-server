@@ -6,7 +6,7 @@ import sequelizeConnection from "../../config/sequelize";
 class Role extends Model <InferAttributes<Role>, InferCreationAttributes<Role>>{
   declare _id: CreationOptional<string>
   declare title: string;
-  declare statickKey: CreationOptional<string>;
+  declare staticKey: CreationOptional<string>;
   declare permissions: ForeignKey<Array<Permission["_id"]>>;
   declare createdBy: ForeignKey<User["_id"]>
   declare updatedBy: ForeignKey<User["_id"]>
@@ -34,35 +34,40 @@ Role.init({
   _id: {
     type: DataTypes.UUID,
     allowNull: false,
-    defaultValue: DataTypes.UUIDV4
+    defaultValue: DataTypes.UUIDV4,
+    unique: true,
+    primaryKey: true
   },
   title:{
     type: DataTypes.STRING,
     allowNull: false,
   },
-  statickKey:{
+  staticKey:{
     type: DataTypes.STRING,
     allowNull: false,
   },
   permissions:{
-    type: DataTypes.ARRAY,
-    allowNull: false,
+    type: DataTypes.ARRAY(DataTypes.UUID),
+    allowNull: true,
+    defaultValue: []
   },
   status:{
-    type: DataTypes.STRING,
+    type: DataTypes.BOOLEAN,
     allowNull: false,
+    defaultValue: true
   },
   isDeleted:{
-    type: DataTypes.STRING,
+    type: DataTypes.BOOLEAN,
     allowNull: false,
+    defaultValue: false
   },
   createdBy:{
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   updatedBy:{
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   createdAt:{
     type: DataTypes.DATE,
@@ -79,8 +84,52 @@ Role.init({
 })
 
 Permission.init({
+  _id: {
+    type: DataTypes.UUID,
+    allowNull: false,
+    defaultValue: DataTypes.UUIDV4,
+    unique: true,
+    primaryKey: true
+  },
+  title:{
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  staticKey:{
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  moduleId: {
+    type: DataTypes.UUID,
+    allowNull: false
+  }
+}, {
+  tableName: "permissions",
+  sequelize: sequelizeConnection,
+  timestamps: true
+})
 
+Module.init({
+  _id: {
+    type: DataTypes.UUID,
+    allowNull: false,
+    defaultValue: DataTypes.UUIDV4,
+    unique: true,
+    primaryKey: true
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  staticKey: {
+    type: DataTypes.STRING,
+    allowNull: false
+  }
+}, {
+  tableName: "modules",
+  sequelize: sequelizeConnection,
+  timestamps: true
 })
 
 
-export { Role, Permission, Module}
+export { Role, Permission, Module };
