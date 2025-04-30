@@ -2,15 +2,66 @@
   "paths":{
     "/api/users":{
       "get":{
+        "tags":[
+          "Users"
+        ],
         "summary":"Get all users",
         "description":"Get all users",
+        "parameters":[
+          {
+            "in":"body",
+            "name":"body",
+            "required":false,
+            "schema":{
+              "$ref":"#/definitions/userRequest"
+            }
+          },
+          {
+            "in":"header",
+            "name":"Authorization",
+            "required":true,
+            "type":"string"
+          }
+        ],
         "responses":{
           "200":{
-            "description":"Success"
+            "description":"Success",
+            "schema":{
+              "$ref":"#/definitions/userResponse"
+            }
           }
         }
       }
     }
   },
-  "definitions":{}
+  "definitions":{
+    "userRequest":{
+      "type":"object",
+      "properties":{
+        "name":{
+          "type":"string"
+        },
+        "email":{
+          "type":"string"
+        },
+        "password":{
+          "type":"string"
+        }
+      }
+    },
+    "userResponse":{
+      "type":"object",
+      "properties":{
+        "name":{
+          "type":"string"
+        },
+        "email":{
+          "type":"string"
+        },
+        "password":{
+          "type":"string"
+        }
+      }
+    }
+  }
 }

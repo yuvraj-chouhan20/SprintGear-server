@@ -10,12 +10,12 @@ class Auth{
     try {
       const token = req.headers.authorization;
       if(!token){
-        CommonService.handleResponse(res, "UNAUTHORIZED", HTTP_CODE.UNAUTHORIZED_CODE, HTTP_CODE.FAILED);
+        CommonService.handleResponse(res, "TOKEN_REQUIRED", HTTP_CODE.UNAUTHORIZED_CODE, HTTP_CODE.FAILED);
         return
       }
       const decodedToken: string | JwtPayloadType = await AuthService.verifyToken(token);
       if(!decodedToken && typeof decodedToken == "string"){
-        CommonService.handleResponse(res, "", HTTP_CODE.UNAUTHORIZED_CODE, HTTP_CODE.FAILED);
+        CommonService.handleResponse(res, "INVALID_TOKEN", HTTP_CODE.UNAUTHORIZED_CODE, HTTP_CODE.FAILED);
         return;
       }
       if(decodedToken && typeof decodedToken !== "string"){
@@ -24,7 +24,7 @@ class Auth{
       }
     } catch (error) {
       console.log("Error in isAuthorized", error);
-      CommonService.handleResponse(res, "", HTTP_CODE.UNAUTHORIZED_CODE, HTTP_CODE.FAILED)
+      CommonService.handleResponse(res, "INVALID_TOKEN", HTTP_CODE.UNAUTHORIZED_CODE, HTTP_CODE.FAILED)
       return;
     }
   }

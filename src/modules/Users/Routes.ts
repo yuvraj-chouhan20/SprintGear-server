@@ -31,6 +31,5 @@ export default (app: Application) => {
     await userObj.resetPassword();
   });
 
-  // app.use('/user', router);
   return router;
 };

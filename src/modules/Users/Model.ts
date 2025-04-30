@@ -101,8 +101,4 @@ User.addHook("beforeUpdate", (user: User) => {
   }
 });
 
-
-(async () =>{
-  await sequelizeConnection.sync({alter: true});
-})();
 export default User;

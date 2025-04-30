@@ -43,11 +43,11 @@ export default () =>{
     mainSwaggerData.basePath = process.env.BASE_PATH;
     const modules = path.join(__dirname, '../modules');
     fs.readdirSync(modules).forEach(file =>{
-      if(fs.existsSync(modules + "/" + file + "/swagger.json")){
-        const stats = fs.statSync(modules + "/" + file + "/swagger.json");
+      if(fs.existsSync(modules + "/" + file + "/Swagger.json")){
+        const stats = fs.statSync(modules + "/" + file + "/Swagger.json");
         const fileSizeBytes = stats.size;
         if(fileSizeBytes){
-          const moduleSwaggerData = JSON.parse(fs.readFileSync(modules + "/" + file + "/swagger.json", 'utf8'));
+          const moduleSwaggerData = JSON.parse(fs.readFileSync(modules + "/" + file + "/Swagger.json", 'utf8'));
           mainSwaggerData.paths = { ...mainSwaggerData.paths, ...moduleSwaggerData.paths };
           mainSwaggerData.definitions = { ...mainSwaggerData.definitions, ...moduleSwaggerData.definitions };
         }

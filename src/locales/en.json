@@ -18,5 +18,7 @@
 	"ROLE_CREATED": "ROLE_CREATED",
 	"\"address\" is not allowed": "\"address\" is not allowed",
 	"\"isDeleted\" is not allowed": "\"isDeleted\" is not allowed",
-	"ROLES_FETCHED": "ROLES_FETCHED"
+	"ROLES_FETCHED": "ROLES_FETCHED",
+	"\"title\" is required": "\"title\" is required",
+	"Invalid Token": "Invalid Token"
 }
