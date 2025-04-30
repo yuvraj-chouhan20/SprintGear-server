@@ -131,5 +131,12 @@ Module.init({
   timestamps: true
 })
 
+Role.beforeCreate((role: Role) => {
+  role.staticKey = role.title.toLowerCase().split(' ').join('-');
+})
+
+Role.beforeUpdate((role: Role) => {
+  role.staticKey = role.title.toLowerCase().split(' ').join('-');
+})
 
 export { Role, Permission, Module };

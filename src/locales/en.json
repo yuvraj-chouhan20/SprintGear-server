@@ -15,5 +15,8 @@
 	"CONFIRM_PASSWORD_NOT_MATCHED": "CONFIRM_PASSWORD_NOT_MATCHED",
 	"PASSWORD_RESET_TOKEN_EXPIRED": "Token Expired! Please try again",
 	"": "",
-	"ROLE_CREATED": "ROLE_CREATED"
+	"ROLE_CREATED": "ROLE_CREATED",
+	"\"address\" is not allowed": "\"address\" is not allowed",
+	"\"isDeleted\" is not allowed": "\"isDeleted\" is not allowed",
+	"ROLES_FETCHED": "ROLES_FETCHED"
 }

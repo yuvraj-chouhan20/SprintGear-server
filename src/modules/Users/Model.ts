@@ -10,14 +10,6 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>>{
   declare fullName: string;
   declare email: string;
   declare password: string;
-  declare address: {
-    line1: string;
-    line2: string;
-    city: string;
-    state: string;
-    country: string;
-    zipCode: string;
-  };
   declare gender: 'male' | 'female' | 'other';
   declare isDeleted: boolean;
   declare age: number;
@@ -62,10 +54,6 @@ User.init({
   },
   gender: {
     type: DataTypes.ENUM('male', 'female', 'other'),
-    allowNull: false
-  },
-  address:{
-    type: DataTypes.JSON,
     allowNull: false
   },
   age:{

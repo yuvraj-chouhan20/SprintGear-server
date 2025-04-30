@@ -27,6 +27,12 @@ class RoleController extends BaseController<RequestType>{
     }
   }
 
+  /**************************************************
+   * @params {
+   *    }
+   *
+   * @returns
+   *************************************************/
   async getRoles(){
     try {
       const query = { isDeleted: false, status: true };
@@ -38,6 +44,15 @@ class RoleController extends BaseController<RequestType>{
     }
   }
 
+  /**************************************************
+   * @params {
+   *    searchText: "",
+   *    page: 1,
+   *    pageSize: 25
+   * }
+   *
+   * @returns
+   *************************************************/
 
   async getRoleListing(){
     try {
@@ -59,14 +74,13 @@ class RoleController extends BaseController<RequestType>{
       }
 
       if(filters && filters.length > 0){
-        
+
       }
 
       if(this.req.currentUser?.Role?.staticKey !== "super-admin"){
         query['createdBy'] = this.req.currentUser?._id;
         query['updatedBy'] = this.req.currentUser?._id;
       }
-
 
       const roles: Role[] = await Role.findAll({where: query, limit, offset: skip});
       return CommonService.handleResponse(this.res, "ROLES_FETCHED", HTTP_CODE.SUCCESS_CODE, HTTP_CODE.SUCCESS, roles);
@@ -75,6 +89,64 @@ class RoleController extends BaseController<RequestType>{
       this.next(error);
     }
   }
+
+  /**************************************************
+   * @params {
+   *    title: "",
+   *    permissions: []
+   * }
+   *
+   * @returns
+   *************************************************/
+  async updateRole(){
+    try {
+      const roleId = this.req.params.roleId;
+      const data: {title?: string, permissions?: [], status?: boolean, isDeleted?: boolean} = this.req.body;
+      const query = {
+        where: { _id: roleId, createdBy: this.req.currentUser?._id },
+        isDeleted: false
+      }
+      const role: Role | null = await Role.findOne({ where: query });
+      if(!role){
+        return CommonService.handleResponse(this.res, "ROLE_NOT_FOUND", HTTP_CODE.NOT_FOUND_CODE, HTTP_CODE.FAILED);
+      }
+      await role.update(data);
+      return CommonService.handleResponse(this.res, "ROLE_UPDATED", HTTP_CODE.SUCCESS_CODE, HTTP_CODE.SUCCESS);
+    } catch (error) {
+      console.log("Error in updateRole", error);
+      this.next(error);
+    }
+  }
+
+  /**************************************************
+   * @params {
+   *    title: "",
+   *    permissions: []
+   * }
+   *
+   * @returns
+   *************************************************/
+
+  async deleteRole(){
+    try {
+      const roleId = this.req.params.roleId;
+      const query = {
+        where: { _id: roleId, createdBy: this.req.currentUser?._id },
+        isDeleted: false
+      }
+      const role: Role | null = await Role.findOne({ where: query });
+      if(!role){
+        return CommonService.handleResponse(this.res, "ROLE_NOT_FOUND", HTTP_CODE.NOT_FOUND_CODE, HTTP_CODE.FAILED);
+      }
+      await role.update({ isDeleted: true });
+      return CommonService.handleResponse(this.res, "ROLE_DELETED", HTTP_CODE.SUCCESS_CODE, HTTP_CODE.SUCCESS);
+    } catch (error) {
+      console.log("Error in deleteRole", error);
+      this.next(error);
+    }
+  }
+
+
 }
 
 export default RoleController;

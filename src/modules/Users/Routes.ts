@@ -1,5 +1,7 @@
 import { NextFunction, Request, Response, Router, Application } from "express";
 import UserController from "./Controller";
+import Validator from "./Validator";
+
 export default (app: Application) => {
 
   const router: Router = Router();
@@ -9,7 +11,7 @@ export default (app: Application) => {
     await userObj.login();
   });
 
-  router.post('/user/register', async (req: Request, res: Response, next: NextFunction) => {
+  router.post('/user/register', Validator.validateCreateUser, async (req: Request, res: Response, next: NextFunction) => {
     const userObj: UserController = new UserController(req, res, next);
     await userObj.register();
   });

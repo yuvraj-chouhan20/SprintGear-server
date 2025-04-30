@@ -50,7 +50,6 @@ class UserController extends BaseController<Request>{
         "age",
         "gender",
         "mobile",
-        "address",
       ]
 
       const processedData = CommonService.processBody(processBody, data);
