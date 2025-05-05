@@ -1,9 +1,9 @@
 import { Response, NextFunction } from "express";
+import { JwtPayloadType, RequestType } from "../../types/requestTypes";
 import CommonService from "../Global/common";
 import { HTTP_CODE } from "../Global/constant";
-import { JwtPayloadType, RequestType } from "../../types/requestTypes";
-import AuthService from "../Auth/auth";
-import { JwtPayload } from "jsonwebtoken";
+import Service from "../../modules/Users/Service";
+
 
 class Auth{
   static async isAuthorized(req: RequestType, res: Response, next: NextFunction): Promise<void>{
@@ -13,7 +13,7 @@ class Auth{
         CommonService.handleResponse(res, "TOKEN_REQUIRED", HTTP_CODE.UNAUTHORIZED_CODE, HTTP_CODE.FAILED);
         return
       }
-      const decodedToken: string | JwtPayloadType = await AuthService.verifyToken(token);
+      const decodedToken: string | JwtPayloadType = await Service.verifyToken(token);
       if(!decodedToken && typeof decodedToken == "string"){
         CommonService.handleResponse(res, "INVALID_TOKEN", HTTP_CODE.UNAUTHORIZED_CODE, HTTP_CODE.FAILED);
         return;

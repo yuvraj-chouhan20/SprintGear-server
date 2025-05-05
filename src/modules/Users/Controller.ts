@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import BaseController from "../Base/Controller";
-import User from "./Model";
+import { User } from "./Model";
 import CommonService from "../../services/Global/common";
 import { HTTP_CODE } from "../../services/Global/constant";
-import AuthService from "../../services/Auth/auth";
+import Service from "./Service";
 import { InferAttributes } from "sequelize";
 import { Role } from "../Roles/Model";
 
@@ -21,7 +21,7 @@ class UserController extends BaseController<Request>{
         return CommonService.handleResponse(this.res, "USER_NOT_FOUND", HTTP_CODE.NOT_FOUND_CODE, HTTP_CODE.FAILED);
       }
 
-      const userTokens = await AuthService.createLogin(user.dataValues, processedData.deviceId)
+      const userTokens = await Service.createLogin(user.dataValues, processedData.deviceId)
 
       if(!userTokens.token){
         return CommonService.handleResponse(this.res, "LOGIN_FAILED",HTTP_CODE.SERVER_ERROR_CODE, HTTP_CODE.FAILED);
@@ -58,8 +58,7 @@ class UserController extends BaseController<Request>{
         return CommonService.handleResponse(this.res, "USER_EXIST", HTTP_CODE.CONFLICT_CODE, HTTP_CODE.FAILED);
       }
 
-      // const newsUser: User | null = await User.create(processedData);
-      const newUser: InferAttributes<User> | null = await AuthService.registerUser(processedData);
+      const newUser: InferAttributes<User> | null = await Service.registerUser(processedData);
       if(newUser){
         return CommonService.handleResponse(this.res, "CREATED_SUCCESSFULLY", HTTP_CODE.RESOURCE_CREATED_CODE, HTTP_CODE.SUCCESS);
       }
@@ -83,7 +82,7 @@ class UserController extends BaseController<Request>{
       return CommonService.handleResponse(this.res, "USER_NOT_FOUND", HTTP_CODE.CONFLICT_CODE, HTTP_CODE.FAILED)
     }
 
-    const forgotPasswordToken = await AuthService.generateForgotPasswordToken(user);
+    const forgotPasswordToken = await Service.generateForgotPasswordToken(user);
 
     if(forgotPasswordToken){
       return CommonService.handleResponse(this.res, "FORGET_PASSWORD_SENT", HTTP_CODE.SUCCESS_CODE, HTTP_CODE.SUCCESS, forgotPasswordToken);
@@ -103,7 +102,7 @@ class UserController extends BaseController<Request>{
       return CommonService.handleResponse(this.res, "CONFIRM_PASSWORD_NOT_MATCHED", HTTP_CODE.UNPROCESSABLE_ENTITY, HTTP_CODE.FAILED)
     }
 
-    const authData = await AuthService.checkResetTokenExpiration(token);
+    const authData = await Service.checkResetTokenExpiration(token);
 
     if(authData && typeof authData !== "string"){
       const [affectedCount, affectedRows] = await User.update({

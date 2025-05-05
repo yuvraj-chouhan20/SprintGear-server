@@ -1,7 +1,7 @@
 import { DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional, HasManyAddAssociationMixin, HasManyAddAssociationsMixin, HasManySetAssociationsMixin, HasManyRemoveAssociationMixin, HasManyRemoveAssociationsMixin, HasManyHasAssociationMixin, HasManyHasAssociationsMixin, HasManyCountAssociationsMixin, HasManyCreateAssociationMixin, Association, NonAttribute, HasOneSetAssociationMixin, HasOneGetAssociationMixin } from "sequelize";
 import sequelizeConnection from "../../config/sequelize";
 import bcrypt from "bcrypt";
-import AuthenticationToken from "../Authentication/Model";
+import { AuthenticationToken } from "../Authentication/Model";
 import { HasManyGetAssociationsMixin } from "sequelize";
 import { Role } from "../Roles/Model";
 
@@ -74,10 +74,6 @@ User.init({
   },
   roleId: {
     type: DataTypes.UUID,
-    references: {
-      model: Role,
-      key: "_id"
-    },
     allowNull: false
   }
 }, {
@@ -88,8 +84,12 @@ User.init({
   updatedAt: 'updatedAt'
 });
 
-User.hasMany(AuthenticationToken);
+
 User.belongsTo(Role, {foreignKey: 'roleId', targetKey: '_id'});
+Role.hasMany(User, {foreignKey: 'roleId'});
+Role.belongsTo(User, {foreignKey: 'createdBy', targetKey: '_id'});
+Role.belongsTo(User, {foreignKey: 'updatedBy', targetKey: '_id'});
+
 
 User.addHook("beforeCreate", (user: User) => {
   user.password = bcrypt.hashSync(user.password, 10)  ;
@@ -101,4 +101,5 @@ User.addHook("beforeUpdate", (user: User) => {
   }
 });
 
-export default User;
+
+export { User };

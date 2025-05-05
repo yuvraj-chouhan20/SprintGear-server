@@ -29,11 +29,11 @@ const databaseConnection = async (): Promise<Sequelize> => {
     const schemaFiles = glob.sync(path.join(__dirname, modules, "**/Model.ts"));
 
     schemaFiles.forEach((schema: string) => {
-      const models = require(schema).default;
+      const models = require(schema);
       db = { ...db, ...models };
     });
 
-    Object.keys(db).forEach((modelName: string) => {
+    Object.keys(db).sort((a: string, b: string) => a.localeCompare(b)).forEach((modelName: string) => {
       if (modelName && db[modelName] && typeof db[modelName].associate === "function") {
         db[modelName].associate(db);
       }
@@ -45,6 +45,6 @@ const databaseConnection = async (): Promise<Sequelize> => {
   }
 };
 
-sequelizeConnection.sync();
+sequelizeConnection.sync({alter: true});
 export default sequelizeConnection;
 export { databaseConnection };

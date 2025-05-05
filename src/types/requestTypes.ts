@@ -1,12 +1,10 @@
 import { Request } from "express";
-import { JwtPayload } from "jsonwebtoken";
 import { InferAttributes } from "sequelize";
-import User from "../modules/Users/Model";
+import { User } from "../modules/Users/Model";
 import { Role } from "../modules/Roles/Model";
 
 export interface RequestType extends Request {
   currentUser?: JwtPayloadType;
-  schema?: 
 }
 
 export interface JwtPayloadType extends InferAttributes<User, {omit: "password"} & { passwordResetToken: string | null, passwordResetTokenExpiration: Date | null, address: {line1: string, line2: string, city: string, state: string, country: string, zipCode: string}, gender: 'male' | 'female' | 'other'}>{

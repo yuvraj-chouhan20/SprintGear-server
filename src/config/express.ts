@@ -1,4 +1,4 @@
-import express, { Request, Response, Application } from 'express'
+import express, { NextFunction, Request, Response } from 'express'
 import cors from 'cors';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
@@ -9,6 +9,8 @@ import swaggerUI from 'swagger-ui-express';
 import fs from 'fs';
 import config from './config';
 import i18n from 'i18n';
+import Seed from '../services/Seed';
+import ErrorMiddleWare from '../services/middlewares/ErrorMiddleWare';
 
 export default () =>{
   const app = express();
@@ -64,6 +66,10 @@ export default () =>{
     }
   });
 
+
+  app.use((error: Error, req: Request, res: Response, next: NextFunction) => ErrorMiddleWare(error, req, res, next));
+  const seed = new Seed();
+  seed.sync();
 
   return app;
 }

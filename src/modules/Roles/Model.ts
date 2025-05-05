@@ -1,15 +1,16 @@
 import { InferAttributes, InferCreationAttributes, CreationOptional, Model, ForeignKey, DataTypes } from "sequelize";
-import User from "../Users/Model";
 import sequelizeConnection from "../../config/sequelize";
+import { User } from "../Users/Model";
 
 
 class Role extends Model <InferAttributes<Role>, InferCreationAttributes<Role>>{
-  declare _id: CreationOptional<string>
+  declare _id: CreationOptional<string>;
   declare title: string;
   declare staticKey: CreationOptional<string>;
   declare permissions: ForeignKey<Array<Permission["_id"]>>;
-  declare createdBy: ForeignKey<User["_id"]>
-  declare updatedBy: ForeignKey<User["_id"]>
+  declare isDefault: CreationOptional<boolean>;
+  declare createdBy: ForeignKey<User["_id"]>;
+  declare updatedBy: ForeignKey<User["_id"]>;
   declare isDeleted: CreationOptional<boolean>;
   declare status: CreationOptional<boolean>;
   declare createdAt: CreationOptional<Date>;
@@ -20,7 +21,7 @@ class Permission extends Model <InferAttributes<Permission>, InferCreationAttrib
   declare _id: CreationOptional<string>;
   declare title: string;
   declare staticKey: CreationOptional<string>;
-  declare moduleId: ForeignKey<Module['_id']>
+  declare moduleId: ForeignKey<Module['_id']>;
 }
 
 class Module extends Model <InferAttributes<Module>, InferCreationAttributes<Module>>{
@@ -51,6 +52,11 @@ Role.init({
     allowNull: true,
     defaultValue: []
   },
+  isDefault:{
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
   status:{
     type: DataTypes.BOOLEAN,
     allowNull: false,
@@ -62,11 +68,11 @@ Role.init({
     defaultValue: false
   },
   createdBy:{
-    type: DataTypes.STRING,
+    type: DataTypes.UUID,
     allowNull: true,
   },
   updatedBy:{
-    type: DataTypes.STRING,
+    type: DataTypes.UUID,
     allowNull: true,
   },
   createdAt:{
@@ -129,14 +135,23 @@ Module.init({
   tableName: "modules",
   sequelize: sequelizeConnection,
   timestamps: true
-})
+});
 
 Role.beforeCreate((role: Role) => {
   role.staticKey = role.title.toLowerCase().split(' ').join('-');
-})
+});
 
 Role.beforeUpdate((role: Role) => {
   role.staticKey = role.title.toLowerCase().split(' ').join('-');
-})
+});
+
+
+(async () => {
+  try {
+    await sequelizeConnection.sync();
+  } catch (error) {
+    console.log(error)
+  }
+})();
 
 export { Role, Permission, Module };

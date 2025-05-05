@@ -1,16 +1,72 @@
 import { InferAttributes, InferCreationAttributes, CreationOptional, Model, DataTypes } from "sequelize";
 import sequelizeConnection from "../../config/sequelize";
-import User from "../Users/Model";
-import Product from "../Product/Model";
-import Category from "../Category/Model";
+import { Product } from "../Product/Model";
+import { Category } from "../Category/Model";
 
+/*************************************
+ * VariantTemplate
+ *************************************/
+class VariantTemplate extends Model<InferAttributes<VariantTemplate>, InferCreationAttributes<VariantTemplate>>{
+  declare _id: CreationOptional<string>;
+  declare title: string;
+  declare category_id: string;
+  declare isDeleted: CreationOptional<boolean>;
+  declare status: CreationOptional<boolean>;
+  declare createdAt: CreationOptional<Date>;
+  declare updatedAt: CreationOptional<Date>;
+}
 
+VariantTemplate.init({
+  _id: {
+    type: DataTypes.UUID,
+    allowNull: false,
+    primaryKey: true,
+    defaultValue: DataTypes.UUIDV4
+  },
+  title: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  category_id: {
+    type: DataTypes.UUID,
+    allowNull: false
+  },
+  isDeleted: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
+  status: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: true
+  },
+  createdAt: {
+    type: DataTypes.DATE,
+    allowNull: false
+  },
+  updatedAt: {
+    type: DataTypes.DATE,
+    allowNull: false
+  }
+}, {
+  tableName: 'variant_templates',
+  sequelize: sequelizeConnection,
+  timestamps: true,
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+});
+
+/*************************************
+ * Variant
+ *************************************/
 class Variant extends Model<InferAttributes<Variant>, InferCreationAttributes<Variant>>{
   declare _id: CreationOptional<string>;
   declare title: string;
+  declare slug: string;
+  declare variant_template_id: string;
   declare isDeleted: CreationOptional<boolean>;
   declare status: CreationOptional<boolean>;
-  declare createdBy: CreationOptional<string>;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 }
@@ -26,6 +82,14 @@ Variant.init({
     type: DataTypes.STRING,
     allowNull: false
   },
+  slug: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  variant_template_id: {
+    type: DataTypes.UUID,
+    allowNull: false
+  },
   isDeleted: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
@@ -35,14 +99,6 @@ Variant.init({
     type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: true
-  },
-  createdBy: {
-    type: DataTypes.UUID,
-    references: {
-      model: User,
-      key: "_id"
-    },
-    allowNull: false
   },
   createdAt: {
     type: DataTypes.DATE,
@@ -60,90 +116,15 @@ Variant.init({
   updatedAt: 'updatedAt'
 });
 
-
-class VariantValue extends Model<InferAttributes<VariantValue>, InferCreationAttributes<VariantValue>>{
-  declare _id: CreationOptional<string>;
-  declare variant_id: string;
-  declare value: string;
-  declare category_id: string;
-  declare isDeleted: CreationOptional<boolean>;
-  declare status: CreationOptional<boolean>;
-  declare createdBy: CreationOptional<string>;
-  declare createdAt: CreationOptional<Date>;
-  declare updatedAt: CreationOptional<Date>;
-}
-
-VariantValue.init({
-  _id: {
-    type: DataTypes.UUID,
-    allowNull: false,
-    primaryKey: true,
-    defaultValue: DataTypes.UUIDV4
-  },
-  variant_id: {
-    type: DataTypes.UUID,
-    references: {
-      model: Variant,
-      key: "_id"
-    },
-    allowNull: false
-  },
-  value: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  category_id: {
-    type: DataTypes.UUID,
-    references: {
-      model: Category,
-      key: "_id"
-    },
-    allowNull: false
-  },
-  isDeleted: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false
-  },
-  status: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: true
-  },
-  createdBy: {
-    type: DataTypes.UUID,
-    references: {
-      model: User,
-      key: "_id"
-    },
-    allowNull: false
-  },
-  createdAt: {
-    type: DataTypes.DATE,
-    allowNull: false
-  },
-  updatedAt: {
-    type: DataTypes.DATE,
-    allowNull: false
-  }
-}, {
-  tableName: 'variant_values',
-  sequelize: sequelizeConnection,
-  timestamps: true,
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-});
-
-/**
+/*************************************
  * VariantProduct
- */
+ *************************************/
 class VariantProduct extends Model<InferAttributes<VariantProduct>, InferCreationAttributes<VariantProduct>>{
   declare _id: CreationOptional<string>;
-  declare variant_value_id: string;
+  declare variant_id: string;
   declare product_id: string;
   declare isDeleted: CreationOptional<boolean>;
   declare status: CreationOptional<boolean>;
-  declare createdBy: CreationOptional<string>;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 }
@@ -155,20 +136,12 @@ VariantProduct.init({
     primaryKey: true,
     defaultValue: DataTypes.UUIDV4
   },
-  variant_value_id: {
+  variant_id: {
     type: DataTypes.UUID,
-    references: {
-      model: VariantValue,
-      key: "_id"
-    },
     allowNull: false
   },
   product_id: {
     type: DataTypes.UUID,
-    references: {
-      model: Product,
-      key: "_id"
-    },
     allowNull: false
   },
   isDeleted: {
@@ -180,14 +153,6 @@ VariantProduct.init({
     type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: true
-  },
-  createdBy: {
-    type: DataTypes.UUID,
-    references: {
-      model: User,
-      key: "_id"
-    },
-    allowNull: false
   },
   createdAt: {
     type: DataTypes.DATE,
@@ -205,23 +170,25 @@ VariantProduct.init({
   updatedAt: 'updatedAt'
 });
 
-/**
+/*************************************
  * Variant associations
- */
-Variant.belongsTo(User, {foreignKey: 'createdBy', targetKey: '_id'});
-Variant.hasMany(VariantValue, {foreignKey: 'variant_id', sourceKey: '_id'});
+ *************************************/
+Variant.belongsTo(VariantTemplate, {foreignKey: 'variant_template_id', targetKey: '_id'});
+Variant.belongsToMany(Product, {foreignKey: 'variant_id', sourceKey: '_id', through: VariantProduct});
+Product.belongsToMany(Variant, {foreignKey: 'product_id', sourceKey: '_id', through: VariantProduct});
 
-/**
- * VariantProduct associations
- */
-// VariantProduct.belongsTo(VariantValue, {foreignKey: 'variant_value_id', targetKey: '_id'});
-// VariantProduct.belongsTo(Product, {foreignKey: 'product_id', targetKey: '_id'});
-
-/**
+/*************************************
  * VariantValue associations
- */
-VariantValue.belongsTo(Variant, {foreignKey: 'variant_id', targetKey: '_id'});
-VariantValue.belongsToMany(Product, {foreignKey: 'variant_value_id', sourceKey: '_id', through: VariantProduct});
+ *************************************/
+VariantTemplate.hasMany(Variant, {foreignKey: 'variant_template_id', sourceKey: '_id'});
+VariantTemplate.belongsTo(Category, {foreignKey: 'category_id', targetKey: '_id'});
 
 
-export { Variant, VariantValue, VariantProduct};
+(async () => {
+  try {
+    await sequelizeConnection.sync();
+  } catch (error) {
+    console.log(error)
+  }
+})();
+export { Variant, VariantTemplate, VariantProduct };

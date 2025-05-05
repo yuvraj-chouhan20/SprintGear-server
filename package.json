@@ -1,11 +1,11 @@
 {
-  "name": "VelocityFit",
+  "name": "www.sprintgear.indianic.com",
   "version": "1.0.0",
   "main": "index.ts",
   "license": "MIT",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.ts"
+    "start": "ts-node ./src/index.ts",
+    "dev": "nodemon ./src/index.ts"
   },
   "dependencies": {
     "@types/bcrypt": "^5.0.2",
@@ -38,6 +38,7 @@
     "i18n": "^0.15.1",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21",
     "mongoose": "^8.13.1",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.2",

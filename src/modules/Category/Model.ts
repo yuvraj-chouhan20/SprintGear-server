@@ -1,10 +1,14 @@
 import { InferAttributes, InferCreationAttributes, CreationOptional, Model, DataTypes } from "sequelize";
 import sequelizeConnection from "../../config/sequelize";
+import CommonService from "../../services/Global/common";
 
 class Category extends Model<InferAttributes<Category>, InferCreationAttributes<Category>>{
   declare _id: CreationOptional<string>;
   declare title: string;
+  declare staticKey: string;
+  declare slug: string;
   declare parentCategory_id: string;
+  declare isMainCategory: CreationOptional<boolean>;
   declare isDeleted: CreationOptional<boolean>;
   declare status: CreationOptional<boolean>;
   declare createdAt: CreationOptional<Date>;
@@ -22,13 +26,22 @@ Category.init({
     type: DataTypes.STRING,
     allowNull: false
   },
+  staticKey: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  slug: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
   parentCategory_id: {
     type: DataTypes.UUID,
-    references: {
-      model: Category,
-      key: "_id"
-    },
     allowNull: true
+  },
+  isMainCategory: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
   },
   isDeleted: {
     type: DataTypes.BOOLEAN,
@@ -56,10 +69,31 @@ Category.init({
   updatedAt: 'updatedAt'
 });
 
-Category.belongsTo(Category, {foreignKey: 'parentCategory_id', targetKey: '_id'});
+Category.addHook("beforeCreate", (attributes: Category) => {
+  if(!attributes.parentCategory_id){
+    attributes.parentCategory_id = attributes._id;
+    attributes.isMainCategory = true;
+  }
+  const [ slug, staticKey ] = CommonService.generateKeyAndSlug(attributes.title);
+  attributes.slug = slug;
+  attributes.staticKey = staticKey;
+})
+
+Category.addHook("beforeUpdate", (attributes: Category) => {
+  const [ slug, staticKey ] = CommonService.generateKeyAndSlug(attributes.title);
+  attributes.slug = slug;
+  attributes.staticKey = staticKey;
+})
+
+
+Category.hasMany(Category, {foreignKey: 'parentCategory_id', as: 'parentCategory'});
 
 (async () => {
-  await sequelizeConnection.sync({alter: true});
+  try {
+    await sequelizeConnection.sync();
+  } catch (error) {
+    console.log(error)
+  }
 })();
 
-export default Category;
+export { Category };

@@ -1,6 +1,12 @@
 {
   "user":[
-    "-password",
-    
+    "_id",
+    "fullName",
+    "email",
+    "gender",
+    "age",
+    "mobile",
+    "status",
+    "roleId"
   ]
 }

@@ -1,17 +1,17 @@
-import jwt, { decode, JwtPayload } from "jsonwebtoken";
-import User from "../../modules/Users/Model";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { User } from "./Model";
 import config from "../../config/config";
-import { InferAttributes, InferCreationAttributes } from "sequelize";
-import AuthenticationToken from "../../modules/Authentication/Model";
+import { InferAttributes } from "sequelize";
+import { AuthenticationToken } from "../Authentication/Model";
 import { JwtPayloadType } from "../../types/requestTypes";
-import { Role } from "../../modules/Roles/Model";
+import { Role } from "../Roles/Model";
 
-class AuthService{
+class Service{
 
   static async createLogin(data: InferAttributes<User>, deviceId: string): Promise<InferAttributes<AuthenticationToken> | {deviceId: string | null, token: string | null}> {
     try {
-      const token: string | null = await AuthService.genreateToken(data, Date.now() + 2 * 60 * 60 * 1000);
-      const refreshToken: string | null =  await AuthService.genreateToken(data, Date.now() + 30 * 24 * 60 * 60 * 1000);
+      const token: string | null = await Service.genreateToken(data, Date.now() + 2 * 60 * 60 * 1000);
+      const refreshToken: string | null =  await Service.genreateToken(data, Date.now() + 30 * 24 * 60 * 60 * 1000);
 
       const param: InferAttributes<AuthenticationToken> = {
         ipAddress: "",
@@ -40,9 +40,9 @@ class AuthService{
   }
 
   /**
-   * 
+   *
    * @param data user data to register
-   * @returns 
+   * @returns
    */
   static async registerUser(data: InferAttributes<User>): Promise<InferAttributes<User> | null> {
     try {
@@ -129,4 +129,4 @@ class AuthService{
   }
 }
 
-export default AuthService;
+export default Service;

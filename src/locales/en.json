@@ -20,5 +20,10 @@
 	"\"isDeleted\" is not allowed": "\"isDeleted\" is not allowed",
 	"ROLES_FETCHED": "ROLES_FETCHED",
 	"\"title\" is required": "\"title\" is required",
-	"Invalid Token": "Invalid Token"
+	"Invalid Token": "Invalid Token",
+	"\"permissions\" does not contain 1 required value(s)": "\"permissions\" does not contain 1 required value(s)",
+	"TOKEN_REQUIRED": "TOKEN_REQUIRED",
+	"Internal server Error": "Internal server Error",
+	"SUCCESS": "SUCCESS",
+	"FAILED_TO_UPDATE_CATEGORY": "FAILED_TO_UPDATE_CATEGORY"
 }

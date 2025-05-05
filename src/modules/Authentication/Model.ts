@@ -1,6 +1,6 @@
 import { DataTypes, InferAttributes, InferCreationAttributes, CreationOptional, Model, ForeignKey, BelongsToGetAssociationMixin } from "sequelize";
 import sequelizeConnection from "../../config/sequelize";
-import User from "../Users/Model";
+import { User } from "../Users/Model";
 
 
 class AuthenticationToken extends Model<InferAttributes<AuthenticationToken>, InferCreationAttributes<AuthenticationToken>>{
@@ -49,4 +49,8 @@ AuthenticationToken.init({
 })
 
 
-export default AuthenticationToken;
+User.hasMany(AuthenticationToken);
+AuthenticationToken.belongsTo(User);
+
+
+export { AuthenticationToken };
