@@ -1,15 +1,22 @@
 import BaseRepository from "../Base/Repository";
-import { InferAttributes, FindOptions } from "sequelize";
-import { Variant } from "./Model";
+import { InferCreationAttributes, Model } from "sequelize";
+import { Variant, VariantTemplate } from "./Model";
+import { MakeNullishOptional } from "sequelize/types/utils";
 
-class Repository extends BaseRepository{
-  data?: InferAttributes<Variant>
-  query?: FindOptions<Variant>;
-  constructor(data?: InferAttributes<Variant>, query?: FindOptions<Variant>){
-    super();
-    this.data = data;
-    this.query = query;
+class VariantRepository extends BaseRepository{
+  constructor(){ super() }
+
+  async addVariant(data: MakeNullishOptional<InferCreationAttributes<VariantTemplate, {
+    omit: never;
+}>>): Promise<Model<VariantTemplate> | null>{
+    try {
+      const variantData = await this.addData<VariantTemplate>(VariantTemplate, data);
+      return variantData;
+    } catch (error) {
+      console.log("Error in add Vairant data", error);
+      throw error;
+    }
   }
 }
 
-export default Repository;
+export default VariantRepository;

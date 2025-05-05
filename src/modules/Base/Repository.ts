@@ -1,4 +1,6 @@
-import { FindOptions, Model, ModelStatic, WhereOptions } from "sequelize";
+import { CreationAttributes, FindOptions, InferAttributes, InferCreationAttributes, Model, ModelStatic, WhereOptions } from "sequelize";
+import { MakeNullishOptional } from "sequelize/types/utils";
+import { InferencePriority } from "typescript";
 class BaseRepository{
   /**
    * Chexk already exist  category
@@ -13,6 +15,19 @@ class BaseRepository{
       return null;
     } catch (error) {
       console.log("Error in checkAlreadyExist", error);
+      throw error;
+    }
+  }
+
+  async addData<T extends Model>(Model: ModelStatic<T>, data: MakeNullishOptional<T["_creationAttributes"]>): Promise<null | Model>{
+    try {
+      const newData: Model = await Model.create(data)
+      if(newData){
+        return newData;
+      }
+      return null;
+    } catch (error) {
+      console.log("Error in add Data", error);
       throw error;
     }
   }
