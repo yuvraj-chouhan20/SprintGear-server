@@ -1,4 +1,4 @@
-import { InferCreationAttributes, Model } from "sequelize";
+import { FindOptions, InferCreationAttributes, Model } from "sequelize";
 import VariantRepository from "./Repository";
 import { VariantTemplate } from "./Model";
 import _ from "lodash"
@@ -10,11 +10,11 @@ class Service {
     this.Repository = new VariantRepository();
   }
   async handleAddVariant(data: InferCreationAttributes<VariantTemplate>){
-    const checkAlreadyExist: Model<VariantTemplate> | null = await this.Repository.addVariant(data)
+    const query: FindOptions = { where: {}}
+    const checkAlreadyExist: Model<VariantTemplate> | null = await this.Repository.checkAlreadyExist(VariantTemplate, query)
     if(!_.isEmpty(checkAlreadyExist)){
       throw new ConflictError(i18n.__("DATA_EXIST"));
     }
-    
   }
 }
 

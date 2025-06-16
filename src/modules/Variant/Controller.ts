@@ -13,6 +13,6 @@ class Controller extends BaseController<Request>{
   async addVariant(){
     const processBody = ["title", "category_id"];
     const processedData = CommonService.processBody(processBody, this.req.body);
-    
+
   }
 }
