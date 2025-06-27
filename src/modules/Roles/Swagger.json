@@ -1,6 +1,6 @@
 {
   "paths":{
-    "/api/roles/create":{
+    "/api/roles/add":{
       "post":{
         "tags":[
           "Roles"

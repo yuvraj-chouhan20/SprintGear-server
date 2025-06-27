@@ -1,4 +1,4 @@
-import { InferAttributes } from "sequelize";
+import { InferAttributes, QueryOptions } from "sequelize";
 import { Category } from "./Model";
 import BaseRepository from "../Base/Repository";
 
@@ -7,7 +7,7 @@ class Repository extends BaseRepository{
   data?: InferAttributes<Category>;
   query?: any;
 
-  constructor(data?: InferAttributes<Category>, query?: any){
+  constructor(data?: InferAttributes<Category>, query?: QueryOptions){
     super();
     this.data = data;
     this.query = query;

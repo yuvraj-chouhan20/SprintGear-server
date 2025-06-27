@@ -19,7 +19,6 @@ export default class CategoryController extends BaseController<Request>{
       const processBody = ["title", "parentCategory_id"];
       const processedData = CommonService.processBody(processBody, this.req.body);
       const response: Category | Error = await new Service().handleAddCategory(processedData);
-      console.log(this.res)
       return CommonService.handleResponse(this.res, "SUCCESS", HTTP_CODE.SUCCESS_CODE, HTTP_CODE.SUCCESS, response);
     } catch (error) {
       console.log("Error in addCategory", error);

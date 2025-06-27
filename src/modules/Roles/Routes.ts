@@ -7,7 +7,7 @@ import Validator from "./Validator";
 export default function(app: Application){
   const router = Router();
 
-  router.post('/roles/create', Validator.validateCreateRoles, Auth.isAuthorized, async (req: RequestType, res: Response, next: NextFunction) => {
+  router.post('/roles/add', Validator.validateCreateRoles, Auth.isAuthorized, async (req: RequestType, res: Response, next: NextFunction) => {
     const roleObj: RoleController = new RoleController(req, res, next);
     await roleObj.createRole();
   });

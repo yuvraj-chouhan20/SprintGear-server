@@ -1,6 +1,6 @@
-import { CreationAttributes, FindOptions, InferAttributes, InferCreationAttributes, Model, ModelStatic, WhereOptions } from "sequelize";
+import { QueryTypes, CreationAttributes, FindOptions, InferAttributes, InferCreationAttributes, Model, ModelStatic, WhereOptions } from "sequelize";
 import { MakeNullishOptional } from "sequelize/types/utils";
-import { InferencePriority } from "typescript";
+
 class BaseRepository{
   /**
    * Chexk already exist  category

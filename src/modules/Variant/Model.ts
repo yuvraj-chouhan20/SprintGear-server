@@ -2,6 +2,7 @@ import { InferAttributes, InferCreationAttributes, CreationOptional, Model, Data
 import sequelizeConnection from "../../config/sequelize";
 import { Product } from "../Product/Model";
 import { Category } from "../Category/Model";
+import CommonService from "../../services/Global/common";
 
 /*************************************
  * VariantTemplate
@@ -9,7 +10,8 @@ import { Category } from "../Category/Model";
 class VariantTemplate extends Model<InferAttributes<VariantTemplate>, InferCreationAttributes<VariantTemplate>>{
   declare _id: CreationOptional<string>;
   declare title: string;
-  declare category_id: string;
+  declare staticKey: string;
+  declare category_id: CreationOptional<Array<string | []>>;
   declare isDeleted: CreationOptional<boolean>;
   declare status: CreationOptional<boolean>;
   declare createdAt: CreationOptional<Date>;
@@ -27,9 +29,17 @@ VariantTemplate.init({
     type: DataTypes.STRING,
     allowNull: false
   },
+  // category_id: {
+  //   type: DataTypes.UUID,
+  //   allowNull: false
+  // },
+  staticKey:{
+    type: DataTypes.STRING,
+    allowNull: false
+  },
   category_id: {
     type: DataTypes.UUID,
-    allowNull: false
+    allowNull: true
   },
   isDeleted: {
     type: DataTypes.BOOLEAN,
@@ -116,6 +126,11 @@ Variant.init({
   updatedAt: 'updatedAt'
 });
 
+
+VariantTemplate.addHook("beforeValidate", (attributes: VariantTemplate) => {
+  const [ slug, staticKey ] = CommonService.generateKeyAndSlug(attributes.title);
+  attributes.staticKey = staticKey;
+});
 /*************************************
  * VariantProduct
  *************************************/

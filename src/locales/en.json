@@ -21,5 +21,6 @@
 	"Internal server Error": "Internal server Error",
 	"SUCCESS": "successfull",
 	"FAILED_TO_UPDATE_CATEGORY": "FAILED_TO_UPDATE_CATEGORY",
-	"DATA_EXIST": "Already Exist"
+	"DATA_EXIST": "Already Exist",
+	"\"category_id\" is not allowed": "\"category_id\" is not allowed"
 }
