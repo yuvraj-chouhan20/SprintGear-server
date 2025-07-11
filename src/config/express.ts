@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser';
 import { sync } from 'glob'
 import path from 'path';
 import swaggerUI from 'swagger-ui-express';
-import fs from 'fs';
+import fs, { globSync } from 'fs';
 import config from './config';
 import i18n from 'i18n';
 import Seed from '../services/Seed';
@@ -36,7 +36,7 @@ export default () =>{
   app.use(morgan('dev'));
 
 
-  if(config.NODE_ENV !== 'production'){
+  if(config.NODE_ENV !== 'production' && config.NODE_ENV !== "test"){
     let options = {
       customCss: '.swagger-ui .models { display: none }'
     };
@@ -59,6 +59,8 @@ export default () =>{
     app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument, options));
   }
 
+  app.get("/", (req: Request, res: Response, next: NextFunction) =>{ res.send("Hello world") });
+
   sync(path.join(__dirname, '../modules','**', 'Routes.ts')).forEach((file: string) => {
     const route = require(file).default;
     if(route){
@@ -68,8 +70,10 @@ export default () =>{
 
 
   app.use((error: Error, req: Request, res: Response, next: NextFunction) => ErrorMiddleWare(error, req, res, next));
-  const seed = new Seed();
-  seed.sync();
+  if(config.NODE_ENV !== "test"){
+    const seed = new Seed();
+    seed.sync();
+  }
 
   return app;
 }

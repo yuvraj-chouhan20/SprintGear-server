@@ -13,6 +13,8 @@ const sequelizeConnection = new Sequelize(db_name, db_user, db_password, {
   dialect: "postgres",
   host: db_host,
   port: Number(db_port),
+  logging: false,
+  sync: { force: false }
 });
 
 interface ModelDictionary {
