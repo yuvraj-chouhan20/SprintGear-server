@@ -1,0 +1,3 @@
+interface ErrorType extends Error{
+  
+}

@@ -1,0 +1,77 @@
+{
+  "paths":{
+    "/api/variant-template":{
+      "post":{
+        "tags":[
+          "VariantTemplate"
+        ],
+        "summary":"Create a Variant Tempalate ",
+        "description":"Create a Variant Tempalate for the variante or variante products",
+        "parameters":[
+          {
+            "in":"body",
+            "name":"body",
+            "required":true,
+            "schema":{
+              "$ref":"#/definitions/variantTemplateRequest"
+            }
+          },
+          {
+            "in":"header",
+            "name":"Authorization",
+            "required":true,
+            "type":"string"
+          }
+        ],
+        "responses":{
+          "200":{
+            "description":"Success",
+            "schema":{
+              "$ref":"#/definitions/variantTemplateRes"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions":{
+    "variantTemplateRequest":{
+      "type":"object",
+      "properties":{
+        "title":{
+          "type":"string"
+        },
+        "category_id":{
+          "type":"string",
+          "example":"4e42f8be-dd99-4293-8cef-26e3efedaa46"
+        }
+      }
+    },
+    "variantTemplateRes":{
+      "type":"object",
+      "properties":{
+        "status":{
+          "type":"boolean",
+          "example": true
+        },
+        "message":{
+          "type":"string",
+          "example": "succesfull"
+        },
+        "data":{
+          "type":"object",
+          "properties":{
+            "_id":{"type":"string", "example": "bb9d433b-d94c-4a3a-8d82-80938a2c3ed9"},
+            "isDeleted": { "type": "boolean", "example": false},
+            "status": { "type": "boolean", "example": true},
+            "title":{"type":"string", "example": "size"},
+            "category_id":{"type":"string", "example": "4e42f8be-dd99-4293-8cef-26e3efedaa46"},
+            "updatedAt":{"type":"string", "example": "2025-06-27T10:58:25.086Z"},
+            "createdAt":{"type":"string", "example": "2025-06-27T10:58:25.086Z"},
+            "staticKey":{"type":"string", "example": "size"}
+          }
+        }
+      }
+    }
+  }
+}
