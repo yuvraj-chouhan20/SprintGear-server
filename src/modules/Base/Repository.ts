@@ -1,4 +1,4 @@
-import { QueryTypes, CreationAttributes, FindOptions, InferAttributes, InferCreationAttributes, Model, ModelStatic, WhereOptions } from "sequelize";
+import { QueryTypes, CreationAttributes, FindOptions, InferAttributes, InferCreationAttributes, Model, ModelStatic, WhereOptions, Attributes } from "sequelize";
 import { MakeNullishOptional } from "sequelize/types/utils";
 
 class BaseRepository{
@@ -19,9 +19,9 @@ class BaseRepository{
     }
   }
 
-  async addData<T extends Model>(Model: ModelStatic<T>, data: MakeNullishOptional<T["_creationAttributes"]>): Promise<null | Model>{
+  async addData<T extends Model>(Model: ModelStatic<T>, data: MakeNullishOptional<T["_creationAttributes"]>): Promise<null | Attributes<T>>{
     try {
-      const newData: Model = await Model.create(data)
+      const newData: Attributes<T> = await Model.create(data)
       if(newData){
         return newData;
       }
